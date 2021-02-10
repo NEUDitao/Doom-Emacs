@@ -52,6 +52,9 @@
 ;;
 ;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
 ;; they are implemented.
+;;
+;;
+;; ---------------------------------------------------------
 
 ;; Table of Contents:
 ;; 1. Whitespace Mode
@@ -75,13 +78,15 @@
 
 (defun wsl-paste ()
   (interactive)
-  (let ((wslbuffername "wsl-temp-buffer"))
+      (let ((wslbuffername "wsl-temp-buffer"))
     (get-buffer-create wslbuffername)
     (with-current-buffer wslbuffername
       (insert (let ((coding-system-for-read 'dos))
-                (shell-command "powershell.exe -command 'Get-Clipboard' 2> /dev/null" wslbuffername nil))))
-    (insert-buffer wslbuffername)
-    (kill-buffer wslbuffername)))
+                (shell-command "powershell.exe -command 'Get-Clipboard' 2> /dev/null"
+                               wslbuffername nil))))
+    (insert-buffer-substring wslbuffername 2)
+      (kill-buffer wslbuffername)))
+
 (map! :leader
       :desc "Paste from os clip" "dp" 'wsl-paste)
 
