@@ -53,11 +53,20 @@
 ;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
 ;; they are implemented.
 
-(global-whitespace-mode 1)
-(super-save-mode 1)
-(map! :leader
-      :desc "Search through project" "pS" '+ivy/project-search)
+;; Table of Contents:
+;; 1. Whitespace Mode
+;; 2. WSL Copy/paste
+;; 3. Projectile Additions
+;; 4. Other changes
 
+;; 1. Whitespace Mode
+(global-whitespace-mode 1)
+(setq whitespace-line-column 127)
+(add-hook 'racket-mode-hook
+          (lambda ()
+            (setq whitespace-line-column 80)))
+
+;; 2. WSL Copy/paste
 (defun wsl-copy (start end)
   (interactive "r")
   (shell-command-on-region start end "clip.exe"))
@@ -75,7 +84,10 @@
     (kill-buffer wslbuffername)))
 (map! :leader
       :desc "Paste from os clip" "dp" 'wsl-paste)
-(setq whitespace-line-column 127)
-(add-hook 'racket-mode-hook
-          (lambda ()
-            (setq whitespace-line-column 80)))
+
+;; 3. Projectile Additions
+(map! :leader
+      :desc "Search through project" "pS" '+ivy/project-search)
+
+;; 4: Other changes
+(super-save-mode 1)
