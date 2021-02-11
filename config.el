@@ -65,6 +65,8 @@
 ;; 1. Whitespace Mode
 (global-whitespace-mode 1)
 (setq whitespace-line-column 127)
+
+;; for [PL with Eli Barzilay](https://pl.barzilay.org/)
 (add-hook 'racket-mode-hook
           (lambda ()
             (setq whitespace-line-column 80)))
@@ -86,7 +88,6 @@
                                wslbuffername nil))))
     (insert-buffer-substring wslbuffername 2)
       (kill-buffer wslbuffername)))
-
 (map! :leader
       :desc "Paste from os clip" "dp" 'wsl-paste)
 
