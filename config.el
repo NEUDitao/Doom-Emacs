@@ -25,8 +25,7 @@
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
-(setq doom-theme 'doom-dracula)
-
+(setq doom-theme 'doom-dark+)
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
 (setq org-directory "~/org/")
@@ -74,7 +73,8 @@
 ;; 2. WSL Copy/paste
 (defun wsl-copy (start end)
   (interactive "r")
-  (shell-command-on-region start end "clip.exe"))
+  (let ((default-directory "/mnt/c"))
+  (shell-command-on-region start end "clip.exe")))
 (map! :leader
       :desc "Copy to os clipboard" "dc" 'wsl-copy)
 
@@ -95,5 +95,30 @@
 (map! :leader
       :desc "Search through project" "pS" '+ivy/project-search)
 
-;; 4: Other changes
+;; 4. Other changes
 (super-save-mode 1)
+
+(face-spec-set
+ 'tuareg-font-lock-constructor-face
+ '((((class color) (background light)) (:foreground "SaddleBrown"))
+   (((class color) (background dark)) (:foreground "#FF69B4"))
+   (((class color) (type tty)) (:foreground "white"))))
+
+  (defun doom*fix-broken-smie-modes (orig-fn arg)
+    (let ((dtrt-indent-run-after-smie dtrt-indent-run-after-smie))
+      (cl-letf* ((old-smie-config-guess (symbol-function 'smie-config-guess))
+                 ((symbol-function 'smie-config-guess)
+                  (lambda ()
+                    (condition-case _ (funcall old-smie-config-guess)
+                      (error (setq dtrt-indent-run-after-smie t))))))
+        (funcall orig-fn arg))))
+(advice-add #'dtrt-indent-mode :around #'doom*fix-broken-smie-modes)
+
+;; produce message containing the face for the text under the cursor
+(defun what-face (pos)
+  (interactive "d")
+  (hl-line-mode -1)
+  (let ((face (or (get-char-property (point) 'read-face-name)
+                  (get-char-property (point) 'face))))
+    (hl-line-mode +1)
+    (if face (message "Face: %s" face) (message "No face at %d" pos))))

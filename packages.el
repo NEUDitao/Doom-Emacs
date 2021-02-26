@@ -52,3 +52,4 @@
 (package! hacker-typer)
 (package! super-save)
 (package! buffer-move)
+(package! prettier)
