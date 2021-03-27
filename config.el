@@ -122,3 +122,66 @@
                   (get-char-property (point) 'face))))
     (hl-line-mode +1)
     (if face (message "Face: %s" face) (message "No face at %d" pos))))
+
+(defun create-taipan ()
+  (interactive)
+  (let ((fname (read-string "Taipan file name: ")))
+    (shell-command (concat "touch " fname ".taipan"))
+    (shell-command (concat "touch " fname ".err"))
+    (shell-command (concat "touch " fname ".options"))
+    (shell-command (concat "echo check >" fname ".options"))
+    (find-file (concat fname ".taipan"))
+    (split-window-right)
+    (other-window 1)
+    (find-file (concat fname ".err"))
+    (other-window 1)))
+
+(defun doom-dashboard-draw-ascii-banner-fn ()
+  (let*
+      ((banner
+        '("If pretty little blue birds fly"
+          "beyond the rainbow"
+          "why then oh why can't I?"
+          " "
+          " "
+          " "
+          "RIP Dayton Bryant 2001-2019"
+          " "
+          ))
+
+      ;; ((banner
+        ;;   '("=================     ===============     ===============   ========  ========"
+        ;;     "\\\\ . . . . . . .\\\\   //. . . . . . .\\\\   //. . . . . . .\\\\  \\\\. . .\\\\// . . //"
+        ;;     "||. . ._____. . .|| ||. . ._____. . .|| ||. . ._____. . .|| || . . .\\/ . . .||"
+        ;;     "|| . .||   ||. . || || . .||   ||. . || || . .||   ||. . || ||. . . . . . . ||"
+        ;;     "||. . ||   || . .|| ||. . ||   || . .|| ||. . ||   || . .|| || . | . . . . .||"
+        ;;     "|| . .||   ||. _-|| ||-_ .||   ||. . || || . .||   ||. _-|| ||-_.|\\ . . . . ||"
+        ;;     "||. . ||   ||-'  || ||  `-||   || . .|| ||. . ||   ||-'  || ||  `|\\_ . .|. .||"
+        ;;     "|| . _||   ||    || ||    ||   ||_ . || || . _||   ||    || ||   |\\ `-_/| . ||"
+        ;;     "||_-' ||  .|/    || ||    \\|.  || `-_|| ||_-' ||  .|/    || ||   | \\  / |-_.||"
+        ;;     "||    ||_-'      || ||      `-_||    || ||    ||_-'      || ||   | \\  / |  `||"
+        ;;     "||    `'         || ||         `'    || ||    `'         || ||   | \\  / |   ||"
+        ;;     "||            .===' `===.         .==='.`===.         .===' /==. |  \\/  |   ||"
+        ;;     "||         .=='   \\_|-_ `===. .==='   _|_   `===. .===' _-|/   `==  \\/  |   ||"
+        ;;     "||      .=='    _-'    `-_  `='    _-'   `-_    `='  _-'   `-_  /|  \\/  |   ||"
+        ;;     "||   .=='    _-'          '-__\\._-'         '-_./__-'         `' |. /|  |   ||"
+        ;;     "||.=='    _-'                                                     `' |  /==.||"
+        ;;     "=='    _-'                         E M A C S                          \\/   `=="
+        ;;     "\\   _-'                                                                `-_   /"
+        ;;     " `''                                                                      ``'"))
+         (longest-line (apply #'max (mapcar #'length banner))))
+    (put-text-property
+     (point)
+     (dolist (line banner (point))
+       (insert (+doom-dashboard--center
+                +doom-dashboard--width
+                (concat
+                 line (make-string (max 0 (- longest-line (length line)))
+                                   32)))
+               "\n"))
+     'face 'doom-dashboard-banner)))
+
+;; I had a dream my life would be so different from this hell I'm living
+;; In Spain but the pain is silent
+;; We can start and finish wars/we're what killed the dinosaurs/we're the asteroid that's overdue
+;;
