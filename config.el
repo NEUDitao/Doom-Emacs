@@ -96,14 +96,17 @@
       :desc "Search through project" "pS" '+ivy/project-search)
 
 ;; 4. Other changes
+;; auto-save on switching buffers
 (super-save-mode 1)
 
+;; OCaml constructors highlighted
 (face-spec-set
  'tuareg-font-lock-constructor-face
  '((((class color) (background light)) (:foreground "SaddleBrown"))
    (((class color) (background dark)) (:foreground "#FF69B4"))
    (((class color) (type tty)) (:foreground "white"))))
 
+;; Doom being weird on WSL
   (defun doom*fix-broken-smie-modes (orig-fn arg)
     (let ((dtrt-indent-run-after-smie dtrt-indent-run-after-smie))
       (cl-letf* ((old-smie-config-guess (symbol-function 'smie-config-guess))
@@ -123,19 +126,17 @@
     (hl-line-mode +1)
     (if face (message "Face: %s" face) (message "No face at %d" pos))))
 
-(defun create-taipan ()
+;; runs a basic rust file
+(defun rrun ()
   (interactive)
-  (let ((fname (read-string "Taipan file name: ")))
-    (shell-command (concat "touch " fname ".taipan"))
-    (shell-command (concat "touch " fname ".err"))
-    (shell-command (concat "touch " fname ".options"))
-    (shell-command (concat "echo check >" fname ".options"))
-    (find-file (concat fname ".taipan"))
-    (split-window-right)
-    (other-window 1)
-    (find-file (concat fname ".err"))
-    (other-window 1)))
+  (if
+      (s-contains? ".rs" buffer-file-name)
+      (shell-command
+       (concat "rustc " buffer-file-name " && "
+               (s-chop-suffix ".rs" buffer-file-name)))
+    (message "Can't run rrun on a non-rust file homie")))
 
+;; redefines splash to be less garish
 (defun doom-dashboard-draw-ascii-banner-fn ()
   (let*
       ((banner
@@ -185,3 +186,4 @@
 ;; In Spain but the pain is silent
 ;; We can start and finish wars/we're what killed the dinosaurs/we're the asteroid that's overdue
 ;;
+(setq racket-smart-open-bracket-mode nil)

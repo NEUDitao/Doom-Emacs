@@ -53,3 +53,4 @@
 (package! super-save)
 (package! buffer-move)
 (package! prettier)
+(package! s)
